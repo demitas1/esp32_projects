@@ -72,4 +72,4 @@ docker exec -it esp32_container bash
 
 Apache license.
 
-About esp-idf tools refer to [LICENSE](ttps://github.com/espressif/esp-idf/blob/master/LICENSE).
+About esp-idf tools refer to [LICENSE](https://github.com/espressif/esp-idf/blob/master/LICENSE).
