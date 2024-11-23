@@ -8,8 +8,6 @@
 
 ターゲットボードへのダウンロードも可能.
 
-ターゲットボードを接続した状態で起動する (/dev/ttyUSB* にアクセスできることを確認すること)
-
 
 ### 使用コンテナについて
 
@@ -59,7 +57,8 @@ idf.py -p /dev/ttyUSB0 monitor
 コンテナ内で以下実行.
 
 ```
-idf.py create-project <my_project_name>
+idf.py create-project my_new_project
+cd my_new_project
 idf.py set-target esp32
 ```
 
