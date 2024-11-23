@@ -7,7 +7,14 @@
 *.class
 node_modules/
 dist/
-build/
 release/
 external/
 log/
+
+# ESP-IDF specific
+sdkconfig.old
+managed_components/
+.component_hash
+
+# Build output directories
+build/

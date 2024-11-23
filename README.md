@@ -8,6 +8,9 @@
 
 ターゲットボードへのダウンロードも可能.
 
+ターゲットボードを接続した状態で起動する (/dev/ttyUSB* にアクセスできることを確認すること)
+
+
 ### 使用コンテナについて
 
 - [IDF Docker image](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-docker-image.html)
@@ -16,12 +19,14 @@
 
 ## プロジェクトのビルドと実行
 
+### blink
+
 - 例
 
 ```
 cd blink
 idf.py set-target esp32
-idf.py menuconfig 
+idf.py menuconfig
 idf.py build
 idf.py -p /dev/ttyUSB0 flash
 ```
@@ -29,6 +34,25 @@ idf.py -p /dev/ttyUSB0 flash
 - `menuconfig` について
 
 `Example settings` でLEDに使用するGPIOを設定可能.
+
+### hello world
+
+- Build
+
+```
+cd hello_world
+idf.py set-target esp32
+idf.py menuconfig
+idf.py build
+```
+
+- Run
+
+```
+idf.py -p /dev/ttyUSB0 flash
+idf.py -p /dev/ttyUSB0 monitor
+```
+
 
 ## 空のプロジェクトの作成
 
