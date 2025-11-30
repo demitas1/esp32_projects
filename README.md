@@ -1,27 +1,43 @@
 # Docker: esp-idf container for ESP32
 
+## ディレクトリ構成
+
+```
+workspace/
+├── docker/          # Docker設定
+│   └── compose.yaml
+├── scripts/         # 実行スクリプト
+│   └── run_container.sh
+├── projects/        # ESP32プロジェクト
+│   ├── blink/
+│   ├── hello_world/
+│   └── ...
+└── README.md
+```
+
 ## Dockerコンテナの起動
 
-`bash run_container.sh` を使用して起動する.
+```bash
+cd workspace
+./scripts/run_container.sh
+```
 
-コンテナ内でCLIツール `esp-idf` が使えるようになる.
-
-ターゲットボードへのダウンロードも可能.
-
+コンテナ内でCLIツール `idf.py` が使えるようになる。
+ターゲットボードへのダウンロードも可能。
 
 ### 使用コンテナについて
 
 - [IDF Docker image](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-docker-image.html)
-プロジェクトディレクトリで実行	(`--privileged` に注意)
 
+`--privileged` オプションでデバイスアクセスを許可している。
 
 ## プロジェクトのビルドと実行
 
+コンテナ起動後、`/projects` ディレクトリがマウントされている。
+
 ### blink
 
-- 例
-
-```
+```bash
 cd blink
 idf.py set-target esp32
 idf.py menuconfig
@@ -29,47 +45,36 @@ idf.py build
 idf.py -p /dev/ttyUSB0 flash
 ```
 
-- `menuconfig` について
+`menuconfig` の `Example Configuration` でLEDに使用するGPIOを設定可能。
 
-`Example settings` でLEDに使用するGPIOを設定可能.
+### hello_world
 
-### hello world
-
-- Build
-
-```
+```bash
 cd hello_world
 idf.py set-target esp32
 idf.py menuconfig
 idf.py build
-```
-
-- Run
-
-```
 idf.py -p /dev/ttyUSB0 flash
 idf.py -p /dev/ttyUSB0 monitor
 ```
 
-
 ## 空のプロジェクトの作成
 
-コンテナ内で以下実行.
+コンテナ内で以下を実行。
 
-```
+```bash
 idf.py create-project my_new_project
 cd my_new_project
 idf.py set-target esp32
 ```
 
-### template
+### テンプレート
 
-```
+```c
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
 #include "esp_system.h"
 #include "esp_event.h"
-// #include "esp_event_loop.h"  // deprecated
 #include "nvs_flash.h"
 #include "driver/gpio.h"
 
@@ -81,12 +86,11 @@ void app_main(void)
 }
 ```
 
-ヘッダファイルなどは `/opt/esp/idf/components` ディレクトリ以下にある.
-
+ヘッダファイルなどは `/opt/esp/idf/components` ディレクトリ以下にある。
 
 ## 実行中のコンテナにログインする方法
 
-```
+```bash
 docker exec -it esp32_container bash
 . /opt/esp/entrypoint.sh
 ```

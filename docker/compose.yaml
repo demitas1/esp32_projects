@@ -1,0 +1,15 @@
+services:
+  esp-idf:
+    image: espressif/idf
+    container_name: esp32_container
+    privileged: true
+    stdin_open: true
+    tty: true
+    working_dir: /projects
+    environment:
+      - TZ=Asia/Tokyo
+      - HOME=/tmp
+    volumes:
+      - ../projects:/projects
+      - /dev:/dev
+    user: "${UID:-1000}"
