@@ -7,7 +7,8 @@ workspace/
 ├── docker/          # Docker設定
 │   └── compose.yaml
 ├── scripts/         # 実行スクリプト
-│   └── run_container.sh
+│   ├── run_container.sh
+│   └── stop_container.sh
 ├── projects/        # ESP32プロジェクト
 │   ├── blink/
 │   ├── hello_world/
@@ -15,11 +16,12 @@ workspace/
 └── README.md
 ```
 
-## Dockerコンテナの起動
+## Dockerコンテナの起動・停止
 
 ```bash
 cd workspace
-./scripts/run_container.sh
+./scripts/run_container.sh   # 起動＋接続
+./scripts/stop_container.sh  # 停止
 ```
 
 コンテナ内でCLIツール `idf.py` が使えるようになる。
