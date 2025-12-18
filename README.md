@@ -20,12 +20,12 @@ workspace/
 
 ```bash
 cd workspace
-./scripts/run_container.sh   # 起動＋接続
+./scripts/run_container.sh   # 起動＋接続（IDF環境自動有効化）
 ./scripts/stop_container.sh  # 停止
 ```
 
-コンテナ内でCLIツール `idf.py` が使えるようになる。
-ターゲットボードへのダウンロードも可能。
+`run_container.sh` はコンテナ起動後、自動的にESP-IDF環境を有効化してシェルに接続する。
+コンテナ内でCLIツール `idf.py` がすぐに使える。
 
 ### 使用コンテナについて
 
@@ -62,9 +62,10 @@ idf.py -p /dev/ttyUSB0 monitor
 
 ## 空のプロジェクトの作成
 
-コンテナ内で以下を実行。
+`run_container.sh` でコンテナに接続後、以下を実行。
 
 ```bash
+cd /projects
 idf.py create-project my_new_project
 cd my_new_project
 idf.py set-target esp32
@@ -93,9 +94,10 @@ void app_main(void)
 ## 実行中のコンテナにログインする方法
 
 ```bash
-docker exec -it esp32_container bash
-. /opt/esp/entrypoint.sh
+docker exec -it esp32_container bash -c "source /opt/esp/entrypoint.sh && set +e && exec bash"
 ```
+
+または `run_container.sh` を再実行しても同様に接続できる。
 
 ## License
 
