@@ -13,3 +13,17 @@ services:
       - ../projects:/projects
       - /dev:/dev
     user: "${UID:-1000}"
+
+  esp-idf-rust:
+    image: espressif/idf-rust:esp32_latest
+    container_name: esp32_rust_container
+    privileged: true
+    stdin_open: true
+    tty: true
+    working_dir: /projects
+    environment:
+      - TZ=Asia/Tokyo
+    volumes:
+      - ../projects:/projects
+      - /dev:/dev
+    user: "${UID:-1000}"

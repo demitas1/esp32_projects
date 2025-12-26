@@ -11,10 +11,19 @@ release/
 external/
 log/
 
-# ESP-IDF specific
+# ESP-IDF (C/C++) specific
 sdkconfig.old
 managed_components/
 .component_hash
 
 # Build output directories
 build/
+
+# Rust specific
+target/
+.embuild/
+Cargo.lock
+
+# ESP-IDF Rust specific
+# sdkconfig is generated from sdkconfig.defaults
+projects/rust/**/sdkconfig

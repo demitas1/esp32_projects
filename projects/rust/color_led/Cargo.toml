@@ -1,0 +1,25 @@
+[package]
+name = "color_led"
+version = "0.1.0"
+authors = ["demitas"]
+edition = "2021"
+resolver = "2"
+rust-version = "1.77"
+
+[[bin]]
+name = "color_led"
+harness = false
+
+[profile.release]
+opt-level = "s"
+
+[profile.dev]
+debug = true
+opt-level = "z"
+
+[dependencies]
+esp-idf-sys = "0.35"
+esp-idf-hal = "0.44"
+
+[build-dependencies]
+embuild = "0.32"
