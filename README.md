@@ -13,8 +13,10 @@ workspace/
 │   ├── blink/
 │   ├── hello_world/
 │   ├── color_led/   # RGB LED (C版)
-│   └── rust/        # Rustプロジェクト
-│       └── color_led/   # RGB LED (Rust版)
+│   ├── rust/        # Rustプロジェクト (std / esp-idf-hal)
+│   │   └── color_led/   # RGB LED (Rust std版)
+│   └── hal/         # Rustプロジェクト (no_std / esp-hal)
+│       └── color_led/   # RGB LED (Rust no_std版)
 └── README.md
 ```
 
@@ -50,8 +52,16 @@ cd workspace
 | IDF (C/C++) | espressif/idf | esp32_container |
 | Rust | espressif/idf-rust:esp32_latest | esp32_rust_container |
 
+Rustには2つの開発方式があり、どちらも同じ `esp32_rust_container` でビルドできる。
+
+| 方式 | 説明 | ターゲット | 主要クレート | 配置 |
+|------|------|------------|--------------|------|
+| std (esp-idf-hal) | ESP-IDFをRustから利用。WiFi/BLEが容易 | `xtensa-esp32-espidf` | `esp-idf-hal` / `esp-idf-svc` | `projects/rust/` |
+| no_std (esp-hal) | ベアメタル。async(embassy)に強い | `xtensa-esp32-none-elf` | `esp-hal` | `projects/hal/` |
+
 - [IDF Docker image](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-docker-image.html)
-- [ESP-IDF Rust](https://github.com/esp-rs/esp-idf-template)
+- [ESP-IDF Rust (std)](https://github.com/esp-rs/esp-idf-template)
+- [esp-hal (no_std)](https://github.com/esp-rs/esp-hal)
 
 `--privileged` オプションでデバイスアクセスを許可している。
 
@@ -172,6 +182,68 @@ project_name/
 └── src/
     └── main.rs          # エントリポイント
 ```
+
+## Rust no_std (esp-hal) プロジェクト
+
+std版と同じ `esp32_rust_container` を使用する（`./scripts/run_container.sh rust`）。
+
+> **重要:** ビルド前に必ず `source /home/esp/export-esp.sh` を実行すること。
+> 実行しないと `linker xtensa-esp32-elf-gcc not found` でビルドに失敗する
+> （XtensaのGCCと `LIBCLANG_PATH` をPATHに通すため）。std版では不要だった手順。
+
+### color_led (Rust no_std版)
+
+RGB LEDを虹色に変化させるプロジェクト（C版・std版と同等機能）。
+
+```bash
+# コンテナに接続後
+source /home/esp/export-esp.sh
+cd /projects/hal/color_led
+
+# ビルド
+cargo build --release
+
+# ESP32に書き込み + モニタ
+espflash flash --monitor target/xtensa-esp32-none-elf/release/color_led
+```
+
+GPIO設定: GPIO5=Red, GPIO22=Green, GPIO23=Blue
+
+### 新規 no_std プロジェクトの作成
+
+`esp-generate` を使用する（コンテナに未導入の場合は `cargo install esp-generate` で導入）。
+
+```bash
+cd /projects/hal
+esp-generate --chip esp32 my_new_project
+```
+
+オプション例（LEDC等の周辺機能を使う場合は `unstable-hal` が必要）:
+
+```bash
+esp-generate --chip esp32 -o unstable-hal -o esp-backtrace -o log my_new_project
+```
+
+> 注意: `esp-generate` はプロジェクト内に `.git` を自動生成する。
+> workspace全体のgit管理と競合するため `rm -rf <project>/.git` で削除すること。
+
+### no_std プロジェクト構成
+
+```
+project_name/
+├── .cargo/
+│   └── config.toml      # ターゲット (xtensa-esp32-none-elf), build-std=core
+├── Cargo.toml           # 依存関係 (esp-hal 等)
+├── build.rs             # linkall.x リンカスクリプト指定
+├── rust-toolchain.toml  # channel = "esp"
+└── src/
+    ├── lib.rs           # ライブラリルート (#![no_std])
+    └── bin/
+        └── main.rs      # エントリポイント (#![no_std] #![no_main])
+```
+
+std版との主な違い: `sdkconfig.defaults` と `ldproxy` が不要。代わりにリンカは
+`linkall.x` を直接使用し、ESP-IDF SDKに依存しない。
 
 ## 実行中のコンテナにログインする方法
 
