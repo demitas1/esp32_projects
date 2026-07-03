@@ -13,6 +13,7 @@ workspace/
 │   ├── blink/
 │   ├── hello_world/
 │   ├── color_led/   # RGB LED (C版)
+│   ├── color_led_cpp/  # RGB LED (C++版)
 │   ├── rust/        # Rustプロジェクト (std / esp-idf-hal)
 │   │   └── color_led/   # RGB LED (Rust std版)
 │   └── hal/         # Rustプロジェクト (no_std / esp-hal)
@@ -102,6 +103,21 @@ idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
 GPIO設定: GPIO5=Red, GPIO22=Green, GPIO23=Blue
+
+### color_led_cpp (C++版)
+
+color_led (C版) と同等機能（RGB LEDを虹色に変化させる）を、C++でSOLID原則
+（特に依存性逆転: `IRgbLed` インターフェースで具体ドライバから分離）に沿って
+再実装したプロジェクト。
+
+```bash
+cd /projects/color_led_cpp
+idf.py set-target esp32
+idf.py build
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+GPIO設定: GPIO5=Red, GPIO22=Green, GPIO23=Blue（C版と同一）
 
 ### 空のプロジェクトの作成
 
