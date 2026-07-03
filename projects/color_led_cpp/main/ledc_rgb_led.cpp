@@ -19,7 +19,7 @@ LedcRgbLed::LedcRgbLed(gpio_num_t red, gpio_num_t green, gpio_num_t blue)
         channel.gpio_num = ch.gpio;
         channel.speed_mode = kSpeedMode;
         channel.channel = ch.channel;
-        channel.intr_type = LEDC_INTR_DISABLE;
+        // intr_type is deprecated; interrupts are handled by the driver.
         channel.timer_sel = kTimer;
         channel.duty = 0;
         channel.hpoint = 0;
