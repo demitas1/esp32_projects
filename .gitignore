@@ -27,3 +27,11 @@ Cargo.lock
 # ESP-IDF Rust specific
 # sdkconfig is generated from sdkconfig.defaults
 projects/rust/**/sdkconfig
+
+# PlatformIO specific
+.pio/
+
+# M5Stack StickS3
+# Factory firmware dumps may contain MAC address / WiFi credentials
+projects/m5stick/backup/
+projects/m5stick/web/firmware/*.bin

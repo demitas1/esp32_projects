@@ -1,11 +1,12 @@
-# Docker: ESP-IDF / ESP-IDF Rust container for ESP32
+# Docker: ESP-IDF / ESP-IDF Rust / PlatformIO container for ESP32
 
 ## ディレクトリ構成
 
 ```
 workspace/
 ├── docker/          # Docker設定
-│   └── compose.yaml
+│   ├── compose.yaml
+│   └── pio/Dockerfile   # PlatformIOイメージ（自作）
 ├── scripts/         # 実行スクリプト
 │   ├── run_container.sh
 │   └── stop_container.sh
@@ -16,8 +17,9 @@ workspace/
 │   ├── color_led_cpp/  # RGB LED (C++版)
 │   ├── rust/        # Rustプロジェクト (std / esp-idf-hal)
 │   │   └── color_led/   # RGB LED (Rust std版)
-│   └── hal/         # Rustプロジェクト (no_std / esp-hal)
-│       └── color_led/   # RGB LED (Rust no_std版)
+│   ├── hal/         # Rustプロジェクト (no_std / esp-hal)
+│   │   └── color_led/   # RGB LED (Rust no_std版)
+│   └── m5stick/     # M5Stack StickS3 (PlatformIO / Arduino)
 └── README.md
 ```
 
@@ -38,12 +40,25 @@ cd workspace
 ./scripts/run_container.sh rust   # Rust環境
 ```
 
+### PlatformIO 環境（M5Stack StickS3）
+
+```bash
+cd workspace
+./scripts/run_container.sh pio    # PlatformIO環境（初回はイメージをビルド）
+```
+
+イメージは `docker/pio/Dockerfile` から自作する（PlatformIO公式イメージがないため）。
+ツールチェーンとライブラリは名前付きボリューム `pio-core`（`/opt/platformio`）に保存され、
+コンテナを作り直しても再ダウンロードされない。
+StickS3 はネイティブUSBのため、シリアルポートは `/dev/ttyACM0` になる。
+
 ### コンテナの停止
 
 ```bash
 ./scripts/stop_container.sh       # 全て停止（デフォルト）
 ./scripts/stop_container.sh idf   # IDFコンテナのみ停止
 ./scripts/stop_container.sh rust  # Rustコンテナのみ停止
+./scripts/stop_container.sh pio   # PlatformIOコンテナのみ停止
 ```
 
 ### 使用コンテナについて
@@ -52,6 +67,7 @@ cd workspace
 |------|----------|------------|
 | IDF (C/C++) | espressif/idf | esp32_container |
 | Rust | espressif/idf-rust:esp32_latest | esp32_rust_container |
+| PlatformIO | esp32-pio:latest（`docker/pio/Dockerfile`） | esp32_pio_container |
 
 Rustには2つの開発方式があり、どちらも同じ `esp32_rust_container` でビルドできる。
 
@@ -65,6 +81,8 @@ Rustには2つの開発方式があり、どちらも同じ `esp32_rust_containe
 - [esp-hal (no_std)](https://github.com/esp-rs/esp-hal)
 
 `--privileged` オプションでデバイスアクセスを許可している。
+PlatformIOコンテナはホストと同じUIDの一般ユーザーで動くため、`group_add: dialout` で
+シリアルポート（`root:dialout`）を開けるようにしている。
 
 ## IDF (C/C++) プロジェクト
 
