@@ -7,6 +7,8 @@ workspace/
 ├── docker/          # Docker設定
 │   ├── compose.yaml
 │   └── pio/Dockerfile   # PlatformIOイメージ（自作）
+├── docs/            # 計画書などのドキュメント
+│   └── m5stick_plan.md  # M5Stack StickS3 開発計画書
 ├── scripts/         # 実行スクリプト
 │   ├── run_container.sh
 │   └── stop_container.sh
